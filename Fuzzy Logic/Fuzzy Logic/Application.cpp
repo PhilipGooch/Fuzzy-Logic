@@ -17,14 +17,14 @@ Application::Application(sf::RenderWindow* window) :
 	size->addGradeMF("large", 25, 30);
 
 	threat = new LinguisticVariable("threat");
-	threat->addTrapezoidMF("medium", 2.5, 10, 15, 20);
-	threat->addTrapezoidMF("medium", 2.5, 10, 15, 20);
-	threat->addTrapezoidMF("medium", 2.5, 10, 15, 20);
+	threat->addTrapezoidMF("low", 0, 5, 15, 20);
+	threat->addTrapezoidMF("medium", 15, 25, 35, 40);
+	threat->addTrapezoidMF("high", 35, 45, 55, 60);
 
 	// Fuzzifying exact variables.
 
-	float exactDistance = 25;
-	float exactSize = 8;
+	float exactDistance = 10;
+	float exactSize = 30;
 
 	distance->fuzzify(exactDistance);
 	size->fuzzify(exactSize);
@@ -43,9 +43,14 @@ Application::Application(sf::RenderWindow* window) :
 
 	// Rules
 
-	float degreeLow = OR(AND(medium, tiny), AND(medium, small));
-	float degreeMedium = AND(close, tiny);
-	float degreeHigh = AND(close, small);
+
+	float degreeLow = OR(OR(OR(OR(AND(tiny, medium), AND(tiny, far)), AND(small, medium)), AND(small, far)), AND(moderate, far));
+	float degreeMedium = OR(OR(AND(tiny, close), AND(moderate, medium)), AND(large, far));
+	float degreeHigh = OR(OR(OR(AND(small, close), AND(moderate, close)), AND(large, close)), AND(large, medium));
+
+	threat->membershipFunctions["low"]->degree = degreeLow;
+	threat->membershipFunctions["medium"]->degree = degreeMedium;
+	threat->membershipFunctions["high"]->degree = degreeHigh;
 
 
 	// De-fuzzification
@@ -54,9 +59,11 @@ Application::Application(sf::RenderWindow* window) :
 	float mediumThreat = 30;
 	float highThreat = 50;
 
-	float troops = (degreeLow * lowThreat + degreeMedium * mediumThreat + degreeHigh * highThreat) / (degreeLow + degreeMedium + degreeHigh);
+	//float troops = (degreeLow * lowThreat + degreeMedium * mediumThreat + degreeHigh * highThreat) / (degreeLow + degreeMedium + degreeHigh);
 
-	cout << troops;
+	float troops = threat->defuzzify();
+
+ 	cout << troops;
 
 
 	//// Instantiating linguistic variables and adding their membership functions

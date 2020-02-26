@@ -35,7 +35,7 @@ private:
 
 	LinguisticVariable *distance, *size, *threat;
 
-	LinguisticVariable *position, *force;
+	//LinguisticVariable *position, *force;
 
 	float AND(float a, float b);
 	float OR(float a, float b);
